@@ -1,6 +1,7 @@
 # Group members
 - Jaykrishnan Gopalakrishna Pillai
 - Filip Danielsson
+- Filip Koňařík
 
 # Goal 
 Using MLOps procedures to develop a model to generate a sequence of frame of someone playing the piano.
