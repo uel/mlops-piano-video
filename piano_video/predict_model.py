@@ -1,17 +1,18 @@
 import torch
+import sys
+from denoising_diffusion_pytorch import GaussianDiffusion, Unet
+from torchvision.utils import save_image
+import os
 
-def predict(
-    model: torch.nn.Module,
-    dataloader: torch.utils.data.DataLoader
-) -> None:
-    """Run prediction for a given model and dataloader.
-    
-    Args:
-        model: model to use for prediction
-        dataloader: dataloader with batches
-    
-    Returns
-        Tensor of shape [N, d] where N is the number of samples and d is the output dimension of the model
+FILE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-    """
-    return torch.cat([model(batch) for batch in dataloader], 0)
+if __name__ == '__main__':
+    model_path = sys.argv[1]
+    num_images = int(sys.argv[2]) # number of images to generate
+
+    diffusion = torch.load(model_path) # load trained DDPM
+    sample = diffusion.sample(batch_size=num_images) # generate images
+    
+    # save generated images as PNGs
+    for img_num, img in enumerate(sample):
+        save_image(img, os.path.join(FILE_DIR, f"./visualizations/img{img_num}.png"))
