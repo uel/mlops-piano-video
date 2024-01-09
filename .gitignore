@@ -5,6 +5,8 @@ data/
 outputs/
 visualizations/
 *.pt
+.vscode
+.idea
 
 #scratch file
 scratch.py
