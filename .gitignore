@@ -1,5 +1,14 @@
 docs/site/
 
+# data, output, visualization, model files
+data/
+outputs/
+visualizations/
+*.pt
+
+#scratch file
+scratch.py
+
 # test cache
 manual_test/
 
