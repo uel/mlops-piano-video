@@ -11,6 +11,8 @@ hyperparameters:
   gradient_accumulate_every: 2 # gradient accumulation steps
   ema_decay: 0.995             # exponential moving average decay
   amp: True                    # turn on mixed precision
-  calculate_fid: True          # whether to calculate fid during training
+  calculate_fid: False         # whether to calculate fid during training
   num_fid_samples: 50          # how much samples to use for fid calculation
-  save_and_sample_every: 1000  # when to save model and generated samples
+  save_and_sample_every: 100   # when to save model and generated samples
+logging:
+  log_on : True
