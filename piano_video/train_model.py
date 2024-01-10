@@ -20,6 +20,7 @@ def main(cfg):
     tb_log = os.path.join(results_folder, 'tb') # tensorboard log dir
     writer = SummaryWriter(log_dir=tb_log) # initializing wandb
     hp = cfg.hyperparameters # hyperparameters loaded from the config file
+    run = wandb.init() # initializing wandb
 
 
     # define U-net backbone of the DDPM
@@ -28,7 +29,6 @@ def main(cfg):
         dim_mults=tuple(cfg.hyperparameters.dim_mults),
         flash_attn=cfg.hyperparameters.flash_attn
     )
-    run = wandb.init(reinit=False)
 
     # define the DDPM itself
     diffusion = GaussianDiffusion(
