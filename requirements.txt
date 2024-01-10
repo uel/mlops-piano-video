@@ -2,4 +2,4 @@ torch >= 2.1.0
 hydra_core >= 1.3.2
 denoising-diffusion-pytorch >= 1.9.5
 wandb >= 0.16.1
-tensorboard >= 2.15.1
+tensorboard >= git 2.15.1
