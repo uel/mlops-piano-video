@@ -36,9 +36,9 @@ def main(cfg):
         ema_decay=hp.ema_decay,
         amp=hp.amp,
         calculate_fid=hp.calculate_fid,
-        results_folder=os.path.join(FILE_DIR, '../reports'),
         num_fid_samples=hp.num_fid_samples,
-        save_and_sample_every=hp.save_and_sample_every
+        save_and_sample_every=hp.save_and_sample_every,
+        results_folder = './results'
     )
 
     trainer.train()
