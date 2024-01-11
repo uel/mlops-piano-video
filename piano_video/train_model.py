@@ -15,13 +15,18 @@ FILE_DIR = os.path.dirname(os.path.abspath(__file__))
 @hydra.main(version_base=None, config_path=os.path.join(FILE_DIR, './config/'), config_name="config.yaml")
 def main(cfg):
     
+    # seeting up paths
     dataset_folder = os.path.join(FILE_DIR, '../data/processed/images_small')
     results_folder = os.path.join(FILE_DIR, '../reports', datetime.datetime.now().strftime('%d:%H-%M-%S'))
     tb_log = os.path.join(results_folder, 'tb') # tensorboard log dir
-    writer = SummaryWriter(log_dir=tb_log) # initializing wandb
-    hp = cfg.hyperparameters # hyperparameters loaded from the config file
-    run = wandb.init() # initializing wandb
 
+    # initalizing tensorboard, wandb and hyperparameters
+    hp = cfg.hyperparameters # hyperparameters loaded from the config file
+    writer = SummaryWriter(log_dir=tb_log) # initializing wandb
+    run = wandb.init() # initializing wandb
+    
+    # fixing seed
+    torch.manual_seed(hp.seed)
 
     # define U-net backbone of the DDPM
     model = Unet(
@@ -38,6 +43,7 @@ def main(cfg):
         sampling_timesteps=hp.sampling_timesteps
     )
 
+    # setting up the trainer class in denoising_diffusion_pytorch
     trainer = Trainer(
             diffusion,
             dataset_folder,
@@ -119,10 +125,11 @@ def main(cfg):
             run.finish()
         accelerator.print('training complete')
 
-    # training using the Trainer class
+    # training using the Trainer class for no logging
     else:
         trainer.train()
 
+    # saving model
     torch.save(diffusion, os.path.join(FILE_DIR, './models/diffusion_model.pt'))
 
 if __name__ == "__main__":
