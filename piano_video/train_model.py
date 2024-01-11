@@ -6,28 +6,36 @@ import hydra
 import os
 import math
 from tqdm.auto import tqdm
+from torch.utils.tensorboard import SummaryWriter
+import wandb
+import datetime
 
 FILE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-@hydra.main(config_path=os.path.join(FILE_DIR, './config/'), config_name="config.yaml")
+@hydra.main(version_base=None, config_path=os.path.join(FILE_DIR, './config/'), config_name="config.yaml")
 def main(cfg):
-    hp = cfg.hyperparameters # hyperparameters loaded from the config file
+    
     dataset_folder = os.path.join(FILE_DIR, '../data/processed/images_small')
-    results_folder = os.path.join(FILE_DIR, '../reports')
+    results_folder = os.path.join(FILE_DIR, '../reports', datetime.datetime.now().strftime('%d:%H-%M-%S'))
+    tb_log = os.path.join(results_folder, 'tb') # tensorboard log dir
+    writer = SummaryWriter(log_dir=tb_log) # initializing wandb
+    hp = cfg.hyperparameters # hyperparameters loaded from the config file
+
+    run = wandb.init() # initializing wandb
 
     # define U-net backbone of the DDPM
     model = Unet(
-        dim = cfg.hyperparameters.dim,
-        dim_mults = tuple(cfg.hyperparameters.dim_mults),
-        flash_attn = cfg.hyperparameters.flash_attn
+        dim=cfg.hyperparameters.dim,
+        dim_mults=tuple(cfg.hyperparameters.dim_mults),
+        flash_attn=cfg.hyperparameters.flash_attn
     )
 
     # define the DDPM itself
     diffusion = GaussianDiffusion(
         model,
-        image_size = hp.image_size,
-        timesteps = hp.timesteps,
-        sampling_timesteps = hp.sampling_timesteps
+        image_size=hp.image_size,
+        timesteps=hp.timesteps,
+        sampling_timesteps=hp.sampling_timesteps
     )
 
     trainer = Trainer(
@@ -51,7 +59,6 @@ def main(cfg):
         device = accelerator.device
 
         with tqdm(initial = trainer.step, total = trainer.train_num_steps, disable = not accelerator.is_main_process) as pbar:
-
             while trainer.step < trainer.train_num_steps:
 
                 total_loss = 0.
@@ -65,6 +72,9 @@ def main(cfg):
                         total_loss += loss.item()
 
                     trainer.accelerator.backward(loss)
+
+                writer.add_scalar('Loss/train', total_loss, trainer.step) # logging loss with tensorboard
+                run.log({"loss/train":total_loss}) # logging loss with wandb
 
                 pbar.set_description(f'loss: {total_loss:.4f}')
 
@@ -107,7 +117,9 @@ def main(cfg):
 
                 pbar.update(1)
 
+            run.finish()
         accelerator.print('training complete')
+
     # training using the Trainer class
     else:
         trainer.train()
