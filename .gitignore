@@ -5,6 +5,7 @@ data/
 outputs/
 results/
 visualizations/
+wandb/
 *.pt
 .vscode
 .idea
