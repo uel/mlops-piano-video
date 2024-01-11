@@ -20,8 +20,8 @@ def main(cfg):
     tb_log = os.path.join(results_folder, 'tb') # tensorboard log dir
     writer = SummaryWriter(log_dir=tb_log) # initializing wandb
     hp = cfg.hyperparameters # hyperparameters loaded from the config file
-    run = wandb.init() # initializing wandb
 
+    run = wandb.init() # initializing wandb
 
     # define U-net backbone of the DDPM
     model = Unet(
@@ -62,6 +62,7 @@ def main(cfg):
             while trainer.step < trainer.train_num_steps:
 
                 total_loss = 0.
+
                 for _ in range(trainer.gradient_accumulate_every):
                     data = next(trainer.dl).to(device)
 
