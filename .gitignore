@@ -4,6 +4,7 @@ docs/site/
 data/
 outputs/
 results/
+reports/
 visualizations/
 wandb/
 *.pt

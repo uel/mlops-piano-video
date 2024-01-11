@@ -1,10 +1,7 @@
 import torch
 from torchvision import utils
 from denoising_diffusion_pytorch import Unet, GaussianDiffusion, Trainer
-from denoising_diffusion_pytorch.denoising_diffusion_pytorch import (
-    num_to_groups,
-    divisible_by,
-)
+from denoising_diffusion_pytorch.denoising_diffusion_pytorch import num_to_groups, divisible_by
 import hydra
 import os
 import math
@@ -16,11 +13,7 @@ import datetime
 FILE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
-@hydra.main(
-    version_base=None,
-    config_path=os.path.join(FILE_DIR, "./config/"),
-    config_name="config.yaml",
-)
+@hydra.main(version_base=None, config_path=os.path.join(FILE_DIR, "./config/"), config_name="config.yaml")
 def main(cfg):
     dataset_folder = os.path.join(FILE_DIR, "../data/processed/images_small")
     results_folder = os.path.join(FILE_DIR, "../reports", datetime.datetime.now().strftime("%d:%H-%M-%S"))
@@ -39,10 +32,7 @@ def main(cfg):
 
     # define the DDPM itself
     diffusion = GaussianDiffusion(
-        model,
-        image_size=hp.image_size,
-        timesteps=hp.timesteps,
-        sampling_timesteps=hp.sampling_timesteps,
+        model, image_size=hp.image_size, timesteps=hp.timesteps, sampling_timesteps=hp.sampling_timesteps
     )
 
     trainer = Trainer(
