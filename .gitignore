@@ -1,7 +1,6 @@
 docs/site/
 
 # data, output, visualization, model files
-data/
 outputs/
 results/
 reports/
