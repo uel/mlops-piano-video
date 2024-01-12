@@ -1,5 +1,5 @@
 steps:
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'gcr.io/firm-catalyst-410709/piano-video', '.']
+  args: ['build', '--file', './dockerfiles/train_model.dockerfile', '-t', 'gcr.io/firm-catalyst-410709/piano-video', '.']
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'gcr.io/firm-catalyst-410709/piano-video']
