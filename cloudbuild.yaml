@@ -1,5 +1,9 @@
 steps:
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '--file', './dockerfiles/train_model.dockerfile', '-t', 'gcr.io/firm-catalyst-410709/piano-video', '.']
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['push', 'gcr.io/firm-catalyst-410709/piano-video']
+- name: 'build train docker image'
+  args: ['build', '--file', './dockerfiles/train_model.dockerfile', '-t', 'gcr.io/firm-catalyst-410709/piano-video-train', '.']
+- name: 'build predict docker image'
+  args: ['build', '--file', './dockerfiles/predict_model.dockerfile', '-t', 'gcr.io/firm-catalyst-410709/piano-video-predict', '.']
+- name: 'push trainer docker image'
+  args: ['push', 'gcr.io/firm-catalyst-410709/piano-video-train']
+- name: 'push predict docker image'
+  args: ['push', 'gcr.io/firm-catalyst-410709/piano-video-predict']
