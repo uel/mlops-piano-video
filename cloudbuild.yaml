@@ -1,5 +1,4 @@
 steps:
-# some comment
 - name: 'gcr.io/cloud-builders/docker'
   args: ['build', '-t', 'gcr.io/firm-catalyst-410709/piano-video', '.']
 - name: 'gcr.io/cloud-builders/docker'
