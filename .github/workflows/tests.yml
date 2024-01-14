@@ -49,8 +49,12 @@ jobs:
         pip install coverage
         coverage run -m pytest -v
 
-        sed -i "/^Code coverage:/s/.*/Code coverage: `coverage report -i --format=total`%/" README.md
-        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-        git config user.name "github-actions[bot]"
-        git commit -am "Automated code coverage change"
-        git push
+        sed -i "/^Code coverage:/s/.*/Code coverage: $(coverage report -i --format=total)%/" README.md
+        if [[ $(git status --porcelain README.md) ]]; then
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git commit -am "Automated code coverage change"
+          git push
+        else
+          echo "No changes in code coverage. Skipping commit."
+        fi
