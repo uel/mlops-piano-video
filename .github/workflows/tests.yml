@@ -26,16 +26,16 @@ jobs:
         
     - name: Install DVC
       run: |
-        pip install dvc
+        pip install dvc[gs]
 
     - name: Add GCS key
       run: |
         echo '${{ secrets.GCS_JSON_KEY }}' > gcs_key.json
-        gcloud auth activate-service-account --key-file=gcs_key.json
+        dvc remote modify --local remote_storage credentialpath gcs_key.json
 
     - name: Download DVC Data
       run: |
-        dvc pull -r piano-video
+        dvc pull
         
     - name: Install dependencies
       run: |
