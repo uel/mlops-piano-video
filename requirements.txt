@@ -3,3 +3,4 @@ hydra_core >= 1.3.2
 denoising-diffusion-pytorch >= 1.9.5
 wandb >= 0.16.1
 tensorboard >= 2.1
+dvc[gcs]
