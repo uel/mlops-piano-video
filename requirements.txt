@@ -1,1 +1,4 @@
 torch >= 2.1.0
+dvc[gcs]
+denoising_diffusion_pytorch==1.9.5
+hydra-core==1.3.2
