@@ -7,7 +7,7 @@ hyperparameters:
   sampling_timesteps: 250       # number of sampling timesteps
   train_batch_size: 8
   train_lr: 8e-5                # learning rate
-  train_num_steps: 100          # total training steps
+  train_num_steps: 1          # total training steps
   gradient_accumulate_every: 2  # gradient accumulation steps
   ema_decay: 0.995              # exponential moving average decay
   amp: False                    # turn on mixed precision (if True training breaks on Apple Silicon Macs)
