@@ -18,5 +18,5 @@ pip install -r requirements.txt --no-cache-dir
 dvc pull
 mkdir -p models
 python -u piano_video/train_model.py
-dvc commit
+dvc add models
 dvc push
