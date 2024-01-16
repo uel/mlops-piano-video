@@ -9,6 +9,9 @@ fi
 
 git config --global credential.helper store
 echo "https://${GH_USER}:${GH_TOKEN}@github.com" > ~/.git-credentials
+git config --global user.email "<>"
+git config --global user.name "gcloud"
+
 git clone https://github.com/uel/mlops-piano-video.git /mlops-piano-video -b "$BRANCH"
 
 mkdir -p /mlops-piano-video/keys
