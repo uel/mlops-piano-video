@@ -7,6 +7,8 @@ fi
 
 : "${BRANCH:=main}"
 
+git config --global credential.helper store
+echo "https://${GH_USER}:${GH_TOKEN}@github.com" > ~/.git-credentials
 git clone https://github.com/uel/mlops-piano-video.git /mlops-piano-video -b "$BRANCH"
 
 mkdir -p /mlops-piano-video/keys
@@ -20,3 +22,6 @@ mkdir -p models
 python -u piano_video/train_model.py
 dvc add models
 dvc push
+git add models.dvc
+git commit -m "model update"
+git push
