@@ -9,3 +9,10 @@ outs:
       remote_storage:
         etag: 08878a80d9eadf83031001
         version_id: '1705336815748359'
+  - relpath: diffusion_model.pt
+    md5: b06f501ff1113ece5b673e53b845f0ec
+    size: 143103618
+    cloud:
+      remote_storage:
+        etag: 0893a382afe7e283031001
+        version_id: '1705439001612691'
