@@ -26,7 +26,7 @@ jobs:
       id: deploy
       uses: google-github-actions/deploy-cloud-functions@main
       with:
-        name: generate-image
+        name: generate-image2
         region: us-east1
         runtime: python311
         source_dir: function_deployment
