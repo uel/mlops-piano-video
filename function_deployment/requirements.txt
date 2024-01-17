@@ -1,0 +1,5 @@
+functions-framework==3.*
+google-cloud-storage >= 2.14.0 
+torch >= 2.1.0
+denoising-diffusion-pytorch >= 1.9.5
+Pillow >= 9.3.0

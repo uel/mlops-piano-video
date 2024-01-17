@@ -17,6 +17,8 @@ PROJECT_DIR = Path(__file__).parent.parent.resolve()
 def main(cfg):
     
     dataset_name = "images_small"
+    model_dir = "tiny"
+
     # setting up paths
     dataset_folder = os.path.join(PROJECT_DIR, 'data', 'processed', dataset_name)
     results_folder = os.path.join(PROJECT_DIR, 'reports', datetime.datetime.now().strftime('%d_%H_%M_%S'))
@@ -30,20 +32,27 @@ def main(cfg):
     # fixing seed
     torch.manual_seed(hp.seed)
 
-    # define U-net backbone of the DDPM
-    model = Unet(
-        dim=cfg.hyperparameters.dim,
-        dim_mults=tuple(cfg.hyperparameters.dim_mults),
-        flash_attn=cfg.hyperparameters.flash_attn
-    )
+    if os.path.exists(os.path.join("models", model_dir, "diffusion_model.pt")):
+        diffusion = torch.load(os.path.join("models", model_dir, "diffusion_model.pt"))
+        if torch.cuda.is_available():
+            diffusion.cuda()
+        diffusion.eval()
+        print("Loaded model from file.")
+    else:
+        # define U-net backbone of the DDPM
+        model = Unet(
+            dim=cfg.hyperparameters.dim,
+            dim_mults=tuple(cfg.hyperparameters.dim_mults),
+            flash_attn=cfg.hyperparameters.flash_attn
+        )
 
-    # define the DDPM itself
-    diffusion = GaussianDiffusion(
-        model,
-        image_size=hp.image_size,
-        timesteps=hp.timesteps,
-        sampling_timesteps=hp.sampling_timesteps
-    )
+        # define the DDPM itself
+        diffusion = GaussianDiffusion(
+            model,
+            image_size=hp.image_size,
+            timesteps=hp.timesteps,
+            sampling_timesteps=hp.sampling_timesteps
+        )
 
     # setting up the trainer class in denoising_diffusion_pytorch
     trainer = Trainer(
@@ -132,7 +141,7 @@ def main(cfg):
         trainer.train()
 
     # saving model
-    torch.save(diffusion, os.path.join(PROJECT_DIR, 'models', 'diffusion_model.pt'))
+    torch.save(diffusion, os.path.join(PROJECT_DIR, 'models', model_dir, 'diffusion_model.pt'))
 
 if __name__ == "__main__":
     main()
