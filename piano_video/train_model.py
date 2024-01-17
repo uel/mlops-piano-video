@@ -4,20 +4,22 @@ from denoising_diffusion_pytorch import Unet, GaussianDiffusion, Trainer
 from denoising_diffusion_pytorch.denoising_diffusion_pytorch import num_to_groups, divisible_by
 import hydra
 import os
+from pathlib import Path
 import math
 from tqdm.auto import tqdm
 from torch.utils.tensorboard import SummaryWriter
 import wandb
 import datetime
 
-FILE_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_DIR = Path(__file__).parent.parent.resolve()
 
-@hydra.main(version_base=None, config_path=os.path.join(FILE_DIR, './config/'), config_name="config.yaml")
+@hydra.main(version_base=None, config_path=os.path.join(PROJECT_DIR, 'piano_video', 'config'), config_name="config.yaml")
 def main(cfg):
     
-    # seeting up paths
-    dataset_folder = os.path.join(FILE_DIR, '../data/processed/images_small')
-    results_folder = os.path.join(FILE_DIR, '../reports', datetime.datetime.now().strftime('%d:%H-%M-%S'))
+    dataset_name = "images_small"
+    # setting up paths
+    dataset_folder = os.path.join(PROJECT_DIR, 'data', 'processed', dataset_name)
+    results_folder = os.path.join(PROJECT_DIR, 'reports', datetime.datetime.now().strftime('%d_%H_%M_%S'))
     tb_log = os.path.join(results_folder, 'tb') # tensorboard log dir
 
     # initalizing tensorboard, wandb and hyperparameters
@@ -130,7 +132,7 @@ def main(cfg):
         trainer.train()
 
     # saving model
-    torch.save(diffusion, os.path.join(FILE_DIR, './models/diffusion_model.pt'))
+    torch.save(diffusion, os.path.join(PROJECT_DIR, 'models', 'diffusion_model.pt'))
 
 if __name__ == "__main__":
     main()
