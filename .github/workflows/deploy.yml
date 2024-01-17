@@ -1,0 +1,33 @@
+name: "Deploy the model"
+
+on:
+  push:
+    branches: [ main, konarfil ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      
+    - name: Authenticate with gcloud
+      uses: google-github-actions/auth@v1
+      with:
+        service_account: development@piano-video.iam.gserviceaccount.com
+        credentials_json: ${{ secrets.GCS_JSON_KEY }}
+
+    - name: Setup GCP Service Account
+      uses: google-github-actions/setup-gcloud@v2
+
+    - name: Deploy Cloud Function
+      id: deploy
+      uses: google-github-actions/deploy-cloud-functions@main
+      with:
+        name: generate-image
+        region: us-east1
+        runtime: python311
+        source_dir: function_deployment
+        entry_point: generate-image
