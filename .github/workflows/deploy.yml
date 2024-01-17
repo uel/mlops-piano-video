@@ -31,3 +31,4 @@ jobs:
         runtime: python311
         source_dir: function_deployment
         entry_point: generate-image
+        memory_mb: 4096
