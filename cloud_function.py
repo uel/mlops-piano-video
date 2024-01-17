@@ -25,7 +25,7 @@ def hello_http(request):
         diffusion = torch.load(buffer)
         image = diffusion.sample(batch_size=1) # generates 1 image
 
-        print(f"success")
+        return f'success'
 
     else:
         return f'Hello World!'
