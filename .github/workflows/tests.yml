@@ -1,0 +1,60 @@
+name: "Run tests"
+
+on:
+  push:
+    branches: [ master, main, konarfil ]
+    paths-ignore: 
+      - "README.md"
+  pull_request:
+    branches: [ master, main ]
+    paths-ignore: 
+      - "README.md"
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.11
+        
+    - name: Install DVC
+      run: |
+        pip install dvc[gs]
+
+    - name: Add GCS key
+      run: |
+        echo '${{ secrets.GCS_JSON_KEY }}' > gcs_key.json
+        dvc remote modify --local remote_storage credentialpath gcs_key.json
+
+    - name: Download DVC Data
+      run: |
+        dvc pull
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install -r requirements_tests.txt
+        
+    - name: Test with pytest
+      run: |
+        pip install pytest
+        pip install coverage
+        coverage run -m pytest -v
+
+        sed -i "/^Code coverage:/s/.*/Code coverage: $(coverage report -i --format=total)%/" README.md
+        if [[ $(git status --porcelain README.md) ]]; then
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git commit -am "Automated code coverage change"
+          git push
+        else
+          echo "No changes in code coverage. Skipping commit."
+        fi

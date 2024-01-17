@@ -1,9 +1,11 @@
 docs/site/
 
 # data, output, visualization, model files
-data/
 outputs/
+results/
+reports/
 visualizations/
+wandb/
 *.pt
 .vscode
 .idea
