@@ -10,18 +10,18 @@ steps:
 - name: "gcr.io/cloud-builders/docker"
   args: ['push', 'gcr.io/piano-video/piano-video-predict']
 # build and push app docker
-# - name: "gcr.io/cloud-builders/docker"
-#   args: ['build', '--file', './dockerfiles/app.dockerfile', '-t', 'gcr.io/piano-video/piano-video-app', '.']
-# - name: "gcr.io/cloud-builders/docker"
-#   args: ['push', 'gcr.io/piano-video/piano-video-app']
-# # Deploy container image to Cloud Run
-# - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-#   entrypoint: gcloud
-#   args:
-#   - 'run'
-#   - 'deploy'
-#   - 'predict-app'
-#   - '--image'
-#   - 'gcr.io/piano-video/app_test'
-#   - '--region'
-#   - 'us-east1'
+- name: "gcr.io/cloud-builders/docker"
+  args: ['build', '--file', './dockerfiles/app.dockerfile', '-t', 'gcr.io/piano-video/piano-video-app', '.']
+- name: "gcr.io/cloud-builders/docker"
+  args: ['push', 'gcr.io/piano-video/piano-video-app']
+# Deploy container image to Cloud Run
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  entrypoint: gcloud
+  args:
+  - 'run'
+  - 'deploy'
+  - 'predict-app'
+  - '--image'
+  - 'gcr.io/piano-video/app_test'
+  - '--region'
+  - 'us-east1'
