@@ -16,8 +16,8 @@ PROJECT_DIR = Path(__file__).parent.parent.resolve()
 @hydra.main(version_base=None, config_path=os.path.join(PROJECT_DIR, 'piano_video', 'config'), config_name="config.yaml")
 def main(cfg):
     
-    dataset_name = "images_small"
-    model_dir = "tiny"
+    dataset_name = "images_128"
+    model_dir = "128"
 
     # setting up paths
     dataset_folder = os.path.join(PROJECT_DIR, 'data', 'processed', dataset_name)
@@ -141,6 +141,7 @@ def main(cfg):
         trainer.train()
 
     # saving model
+    os.makedirs(os.path.join(PROJECT_DIR, 'models', model_dir), exist_ok=True)
     torch.save(diffusion, os.path.join(PROJECT_DIR, 'models', model_dir, 'diffusion_model.pt'))
 
 if __name__ == "__main__":
