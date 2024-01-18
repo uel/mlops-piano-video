@@ -6,6 +6,7 @@ results/
 reports/
 visualizations/
 wandb/
+keys/
 *.pt
 .vscode
 .idea

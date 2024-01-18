@@ -5,15 +5,15 @@ RUN apt update && \
     apt install --no-install-recommends -y build-essential gcc git && \
     apt clean && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /app
+WORKDIR /
 
-COPY /app /app
-COPY /models /models
 COPY requirements_app.txt requirements_app.txt 
+COPY /dockerfiles/app.sh /app.sh
 
 RUN pip install --upgrade pip
-RUN pip install -r requirements_app.txt
+RUN pip install -r requirements_app.txt --no-cache-dir
 
-EXPOSE $PORT
+EXPOSE 8080
+RUN chmod +x /app.sh
 
-CMD exec uvicorn main:app --port $PORT --host 0.0.0.0 --workers 1
+ENTRYPOINT ["/app.sh"]
