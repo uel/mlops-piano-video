@@ -3,7 +3,6 @@ docs/site/
 # data, output, visualization, model files
 outputs/
 results/
-reports/
 visualizations/
 wandb/
 keys/
