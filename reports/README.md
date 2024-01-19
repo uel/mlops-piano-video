@@ -443,7 +443,14 @@ workerPoolSpecs:
 >
 > Answer:
 
---- We deployed our model using Cloud Functions. For this we use a Python script which loads our model from a Google Cloud bucket, runs inference to generate an image and returns a HTML page containing the image which can be easily displayed by user's browser. We also created GitHub workflow which ensures that the Cloud function is updated every time we push new version of the function to the repository.  ---
+--- We deployed our model using Cloud Functions. For this we use a Python script which loads our model from a Google Cloud bucket, runs inference to generate an image and returns a HTML page containing the image which can be easily displayed by user's browser. We also created GitHub workflow which ensures that the Cloud function is updated every time we push new version of the function to the repository. The cloud function can be invoked with 
+```
+curl -m 310 -X POST https://us-east1-piano-video.cloudfunctions.net/generate-image2 \
+-H "Authorization: bearer $(gcloud auth print-identity-token)" \
+-H "Content-Type: application/json" \
+-d '{}'
+```
+We deployed the model locally using a fastapi app. The main:app is located in the app directory under root.---
 
 ### Question 23
 
@@ -472,10 +479,7 @@ workerPoolSpecs:
 >
 > Answer:
 
---- s240529 - About 5 dollars in total (storage, Vertex AI training)
-    s240554 - 0.31 dollars
-    s240493 - About 1 dollar (Cloud functions)
- ---
+--- s240529 - About 5 dollars in total (storage, Vertex AI training). s240554 - 0.31 dollars. s240493 - About 1 dollar (Cloud functions)---
 
 ## Overall discussion of project
 
@@ -510,13 +514,11 @@ workerPoolSpecs:
 >
 > Answer:
 
---- 
-s240529 - Creating a Dockerfile for the Cloud training and configuring authentication proved to be a formidable challenge. The intricate task demanded persistent efforts and was eventually conquered through a series of trial-and-error iterations conducted on local Docker images. Additionally, obtaining the necessary quotas for GPU usage posed a prolonged and arduous process, requiring patience and perseverance to navigate through the bureaucratic hurdles.
+--- s240529 - Creating a Dockerfile for the Cloud training and configuring authentication proved to be a formidable challenge. The intricate task demanded persistent efforts and was eventually conquered through a series of trial-and-error iterations conducted on local Docker images. Additionally, obtaining the necessary quotas for GPU usage posed a prolonged and arduous process, requiring patience and perseverance to navigate through the bureaucratic hurdles.
 
 s240554 - The endeavor to craft a Dockerfile for the deployment application presented its own set of hurdles. Overcoming these challenges involved the strategic deployment of the application on local machines, a tactic that ultimately proved successful. However, the journey was not without its difficulties, particularly in the arena of setting up the cloudbuild file. Addressing these intricacies demanded a meticulous approach, underscoring the complexity inherent in the deployment process.
 
-s240493 - The establishment of an automated deployment pipeline through GitHub actions became a time-consuming odyssey, largely attributed to a lack of prior experience in this domain. To navigate this unfamiliar terrain, I delved deep into extensive googling sessions and engaged in insightful discussions with ChatGPT well into the late-night hours. The collaborative exchange of ideas and troubleshooting methodologies played a pivotal role in overcoming hurdles, ultimately leading to a successful implementation of the automated deployment workflow.
- ---
+s240493 - The establishment of an automated deployment pipeline through GitHub actions became a time-consuming odyssey, largely attributed to a lack of prior experience in this domain. To navigate this unfamiliar terrain, I delved deep into extensive googling sessions and engaged in insightful discussions with ChatGPT well into the late-night hours. The collaborative exchange of ideas and troubleshooting methodologies played a pivotal role in overcoming hurdles, ultimately leading to a successful implementation of the automated deployment workflow.---
 
 ### Question 27
 
@@ -533,7 +535,4 @@ s240493 - The establishment of an automated deployment pipeline through GitHub a
 >
 > Answer:
 
---- s240554 - cloudbuild.yaml to build Docker container, write code for the Cloud function, logging using W&B, FastAPI app
-    s240493 - unittesting, GitHub actions to automatically deploy Cloud functions
-    s240529 - initialize project structure, data generation, setting up DVC, setting up GCS bucket, training with Vertex AI
-    ---
+--- s240554 - cloudbuild.yaml to build Docker container, write code for the Cloud function, logging using W&B, FastAPI app. s240493 - unittesting, GitHub actions to automatically deploy Cloud functions. s240529 - initialize project structure, data generation, setting up DVC, setting up GCS bucket, training with Vertex AI.---
