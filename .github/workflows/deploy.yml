@@ -35,4 +35,4 @@ jobs:
         source_dir: function_deployment
         entry_point: generate_image
         memory_mb: 4096
-        timeout: 600
+        timeout: 400
