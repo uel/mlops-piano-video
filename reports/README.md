@@ -94,7 +94,7 @@ end of the project.
 
 ### Additional
 
-* [ ] Revisit your initial project description. Did the project turn out as you wanted?
+* [x] Revisit your initial project description. Did the project turn out as you wanted?
 * [x] Make sure all group members have a understanding about all parts of the project
 * [x] Uploaded all your code to github
 
@@ -116,7 +116,7 @@ end of the project.
 >
 > Answer:
 
---- s240554, s240493---
+--- s240554, s240493, s240529 ---
 
 ### Question 3
 > **What framework did you choose to work with and did it help you complete the project?**
@@ -308,7 +308,7 @@ Our second workflow file handles automatic deployment and ensures the most recen
 >
 > Answer:
 
---- The only metric that we have tracked for this project is loss during the training. The loss was only logged, to show the usage with  wandb and tensorboard, and not used to improve the model. The wandb [sreenshot](figures/wandb-screenshot.png) and tensorboard [screenshot](figures/tb-screenshot.png) are attached to show the loss logging.---
+--- The only metric that we have tracked for this project is loss during the training. The loss was only logged, to show the usage with  wandb and tensorboard, and not used to improve the model. The wandb ![sreenshot](figures/wandb-screenshot.png) and tensorboard ![screenshot](figures/tb-screenshot.png) are attached to show the loss logging.---
 
 ### Question 15
 
@@ -323,7 +323,29 @@ Our second workflow file handles automatic deployment and ensures the most recen
 >
 > Answer:
 
---- question 15 fill here ---
+--- We used existing Dockerfiles to build images for both training and prediction. We have also setup automatic building using Cloud build. We also created a development Dockerfile for fast experimentation and training in the Cloud. We attempted to create a Dockerfile for deployment but were met with difficulties which didn't solve. Link to Dockerfile: [link](https://github.com/uel/mlops-piano-video/blob/main/dockerfiles/dev.dockerfile)
+
+```
+workerPoolSpecs:
+    machineSpec:
+        machineType: n1-standard-8
+        acceleratorType: NVIDIA_TESLA_T4 
+        acceleratorCount: 1
+    replicaCount: 1
+    containerSpec:
+        imageUri: gcr.io/piano-video/dev@sha256:7fbf4b2569dabf8b4565279f0bc894b9d6b1cb4f0d428a3cefb2ccbe1ed06c52
+        env:
+        - name: WANDB_API_KEY
+          value: 
+        - name: BRANCH
+          value: 
+        - name: GOOGLE_APPLICATION_CREDENTIALS_JSON
+          value: ''
+        - name: GH_TOKEN
+          value: ''
+        - name: GH_USER
+          value: ''
+``` ---
 
 ### Question 16
 
@@ -359,7 +381,7 @@ Our second workflow file handles automatic deployment and ensures the most recen
 1. Cloud Storage - to store the data input for training and to save the model after training. The model was then taken from a bucked and served to a Cloud Function for deployment.
 2. Cloud Build - used to build docker images from the github repository in a continuos manner using the trigger for the autobuild as the push to main branch of our repo and the build is done using a cloudbuild.yaml file. Forms part of CI.
 3. Artifact/Container Registry - the docker images were saved in the Artifact Registry after the images were built using Cloud Build. The images could be accessed from the registry to initiate a new VM to do computations.
-4. Compute Engine - was used to obtain a VM to perform training on the model.
+4. Compute Engine - was used to obtain a VM to perform training on the model.job
 7. Vertex AI - a better alternative for training the model in the cloud. Could start custom VMs, train the model, finish the training and close the created VM. We used Vertex AI to train the model.
 5. Cloud Functions - we used a simple Cloud Function to deploy the model. The cloud function accessed the saved model from the bucket and displayed the image that was generated from the trained model.
 6. Cloud Run - we made an app using fastapi to enable a user to access the model. The objective of the using cloud run is to auto build the predict docker image and then deploy it automatically as well. The cloud run will use the same trigger as the cloud build i.e. pushing to the main branch of the repo. ---
@@ -377,7 +399,7 @@ Our second workflow file handles automatic deployment and ensures the most recen
 >
 > Answer:
 
---- question 18 fill here ---
+--- We did not use Compute engine for training. Instead we used Vertex AI custom jobs - machines with T4 GPU. Using Vertex AI minimized resource usage by turning off the compute once the job is finished.---
 
 ### Question 19
 
@@ -386,7 +408,7 @@ Our second workflow file handles automatic deployment and ensures the most recen
 >
 > Answer:
 
---- Image of GCP bucket - [1](figures/bucket-1.png), [2](figures/bucket-2.png), [3](figures/bucket-3.png) ---
+--- Image of GCP bucket - ![1](figures/bucket-1.png), ![2](figures/bucket-2.png), ![3](figures/bucket-3.png) ---
 
 ### Question 20
 
@@ -395,7 +417,7 @@ Our second workflow file handles automatic deployment and ensures the most recen
 >
 > Answer:
 
---- Image of docker images for training generated as part of Cloud Build trigger from pushing to main branch - [image](figures/cr-2.png) ---
+--- Image of docker images for training generated as part of Cloud Build trigger from pushing to main branch - ![image](figures/cr-2.png) ---
 
 ### Question 21
 
@@ -404,7 +426,7 @@ Our second workflow file handles automatic deployment and ensures the most recen
 >
 > Answer:
 
---- Image of Cloud build - [image](figures/cloud-build.png) ---
+--- Image of Cloud build - ![image](figures/cloud-build.png) ---
 
 ### Question 22
 
@@ -449,7 +471,10 @@ Our second workflow file handles automatic deployment and ensures the most recen
 >
 > Answer:
 
---- question 24 fill here ---
+--- s240529 - About 5 dollars in total (storage, Vertex AI training)
+    s240554 - 0.31 dollars
+    s240493 - About 1 dollar (Cloud functions)
+ ---
 
 ## Overall discussion of project
 
@@ -470,7 +495,7 @@ Our second workflow file handles automatic deployment and ensures the most recen
 >
 > Answer:
 
---- Image of architecture - [image](figures/diagram.png) As the diagram shows we made use of multiple tools which the course made us familiar with. The starting point of the diafram is the local repository saved on our computers. To backup and share the code we used GitHub repository. In the repository we also setup GitHub actions workflow. The first workflow takes care of automatic unit testing. Later we added a second workflow which automatically deploys a Cloud function. The training of the model was done in two ways. First we tested the training on our local GPU. Later on we also trained the model in Cloud on more data. We used config files to save parameters of our experiments. The parameters were loaded using Hydra. We also used Weights and Biases for logging during training. Both data and the trained model are saved in Cloud storage. For data loading and version control we used DVC. The trained model is finally deployed as a Cloud function. As mentioned the code of the function is automatically deployed using GitHub Actions. The function itself loads the trained model from the Cloud storage. It accepts a HTTP request from the user and returns an image generated by the model in form of HTTP page. ---
+--- Image of architecture - ![image](figures/diagram.png) As the diagram shows we made use of multiple tools which the course made us familiar with. The starting point of the diafram is the local repository saved on our computers. To backup and share the code we used GitHub repository. In the repository we also setup GitHub actions workflow. The first workflow takes care of automatic unit testing. Later we added a second workflow which automatically deploys a Cloud function. The training of the model was done in two ways. First we tested the training on our local GPU. Later on we also trained the model in Cloud on more data. We used config files to save parameters of our experiments. The parameters were loaded using Hydra. We also used Weights and Biases for logging during training. Both data and the trained model are saved in Cloud storage. For data loading and version control we used DVC. The trained model is finally deployed as a Cloud function. As mentioned the code of the function is automatically deployed using GitHub Actions. The function itself loads the trained model from the Cloud storage. It accepts a HTTP request from the user and returns an image generated by the model in form of HTTP page. ---
 
 ### Question 26
 
@@ -484,7 +509,13 @@ Our second workflow file handles automatic deployment and ensures the most recen
 >
 > Answer:
 
---- question 26 fill here ---
+--- 
+s240529 - Creating a Dockerfile for the Cloud training and configuring authentication proved to be a formidable challenge. The intricate task demanded persistent efforts and was eventually conquered through a series of trial-and-error iterations conducted on local Docker images. Additionally, obtaining the necessary quotas for GPU usage posed a prolonged and arduous process, requiring patience and perseverance to navigate through the bureaucratic hurdles.
+
+s240554 - The endeavor to craft a Dockerfile for the deployment application presented its own set of hurdles. Overcoming these challenges involved the strategic deployment of the application on local machines, a tactic that ultimately proved successful. However, the journey was not without its difficulties, particularly in the arena of setting up the cloudbuild file. Addressing these intricacies demanded a meticulous approach, underscoring the complexity inherent in the deployment process.
+
+s240493 - The establishment of an automated deployment pipeline through GitHub actions became a time-consuming odyssey, largely attributed to a lack of prior experience in this domain. To navigate this unfamiliar terrain, I delved deep into extensive googling sessions and engaged in insightful discussions with ChatGPT well into the late-night hours. The collaborative exchange of ideas and troubleshooting methodologies played a pivotal role in overcoming hurdles, ultimately leading to a successful implementation of the automated deployment workflow.
+ ---
 
 ### Question 27
 
@@ -501,4 +532,7 @@ Our second workflow file handles automatic deployment and ensures the most recen
 >
 > Answer:
 
---- question 27 fill here ---
+--- s240554 - cloudbuild.yaml to build Docker container, write code for the Cloud function, logging using W&B, FastAPI app
+    s240493 - unittesting, GitHub actions to automatically deploy Cloud functions
+    s240529 - initialize project structure, data generation, setting up DVC, setting up GCS bucket, training with Vertex AI
+    ---

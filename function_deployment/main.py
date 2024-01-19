@@ -21,7 +21,7 @@ def generate_image(request):
     bucket = client.get_bucket(BUCKET_NAME)
     blob = bucket.get_blob('models/tiny/diffusion_model.pt')
     buffer = io.BytesIO(blob.download_as_bytes())
-    diffusion = torch.load(buffer)
+    diffusion = torch.load(buffer, map_location=torch.device('cpu'))
     image = diffusion.sample(batch_size=1) # generates 1 image
     
     image = image.squeeze(0)
