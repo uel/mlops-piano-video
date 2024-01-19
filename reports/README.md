@@ -345,7 +345,8 @@ workerPoolSpecs:
           value: ''
         - name: GH_USER
           value: ''
-``` ---
+```
+---
 
 ### Question 16
 
