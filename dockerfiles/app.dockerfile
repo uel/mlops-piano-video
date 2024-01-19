@@ -7,13 +7,10 @@ RUN apt update && \
 
 WORKDIR /
 
-COPY requirements_app.txt requirements_app.txt 
-COPY /dockerfiles/app.sh /app.sh
+COPY requirements_app.txt requirements_app.txt
 
 RUN pip install --upgrade pip
 RUN pip install -r requirements_app.txt --no-cache-dir
 
-EXPOSE 8080
-RUN chmod +x /app.sh
-
-ENTRYPOINT ["/app.sh"]
+EXPOSE $PORT
+CMD git clone https://github.com/uel/mlops-piano-video.git && cd mlops-piano-video && dvc pull models/tiny && uvicorn app.main:app --port $PORT --workers 1 main:app
