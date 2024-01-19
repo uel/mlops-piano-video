@@ -1,10 +1,11 @@
 name: "Deploy the model"
 
 on:
-  branches:
-      - main
-  tags:
-      - 'v*'
+  push:
+    branches:
+        - main
+    tags:
+        - 'v*'
 
 jobs:
   build:
