@@ -1,8 +1,10 @@
 name: "Deploy the model"
 
 on:
-  push:
-    branches: [ main, konarfil ]
+  branches:
+      - main
+  tags:
+      - 'v*'
 
 jobs:
   build:
