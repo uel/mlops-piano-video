@@ -3,12 +3,12 @@ outs:
   path: models
   files:
   - relpath: 128/diffusion_model.pt
-    md5: 3dc7e3b1aee734bed00c4b7fc091e056
-    size: 143107778
+    md5: 41eac7fd0a6607844213afc8ce877a15
+    size: 143107202
     cloud:
       remote_storage:
-        etag: 08b8b4fb86a3e983031001
-        version_id: '1705661182171704'
+        etag: 08e1fe86b3b8e983031001
+        version_id: '1705666911780705'
   - relpath: diffusion_model.pt
     md5: 2f46f11e7bf2273cdd404ddb8a8eafc6
     size: 143107778
