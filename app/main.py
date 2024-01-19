@@ -6,7 +6,7 @@ import torch, denoising_diffusion_pytorch
 
 app = FastAPI()
 file_name = "diffusion_model.pt"
-model_path = os.path.join(os.path.dirname(__file__), '..', 'models', 'tiny', file_name)
+model_path = os.path.join(os.path.dirname(__file__), '..', 'models', '128', file_name)
 
 @app.get('/')
 def root():
@@ -14,7 +14,13 @@ def root():
 
 @app.get("/predict", response_class=StreamingResponse)
 def predict():
-    diffusion = torch.load(model_path)
+    diffusion = torch.load(model_path, map_location=torch.device('cpu'))
+    if torch.cuda.is_available():
+        diffusion = diffusion.to(device=torch.device("cuda"))
+    elif torch.backends.mps.is_available():
+        diffusion = diffusion.to(device=torch.device("mps"))
+    else:
+        diffusion = diffusion
     image = diffusion.sample(batch_size=1)
     image = image.squeeze(0)
     image = image.detach()
