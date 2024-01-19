@@ -2,10 +2,10 @@ outs:
 - hash: md5
   path: models
   files:
-  - relpath: tiny/diffusion_model.pt
-    md5: b06f501ff1113ece5b673e53b845f0ec
-    size: 143103618
+  - relpath: 128/diffusion_model.pt
+    md5: 3dc7e3b1aee734bed00c4b7fc091e056
+    size: 143107778
     cloud:
       remote_storage:
-        etag: 08aafcbbfae9e483031001
-        version_id: '1705508416192042'
+        etag: 08b8b4fb86a3e983031001
+        version_id: '1705661182171704'
