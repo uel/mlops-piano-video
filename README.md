@@ -18,4 +18,4 @@ We will extract training data from publicly available videos using https://githu
 No existing models for this specific task exist at the moment, we will therefore train a generative model from scratch. The data extraction step uses deep learning models for [hand landmarking](https://developers.google.com/mediapipe/solutions/vision/hand_landmarker), keyboard detection and [piano transcription](https://github.com/bytedance/piano_transcription).
 
 # Code coverage
-Code coverage: 46%
+Code coverage: 52%

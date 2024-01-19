@@ -7,7 +7,7 @@ import os
 FILE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_PT = os.path.join(FILE_DIR, 'models', 'diffusion_model.pt')
 
-@hydra.main(version_base=None, config_path=".", config_name='config.yaml')
+@hydra.main(version_base=None, config_path="./config", config_name='config.yaml')
 def generate(cfg):
     hp = cfg.hyperparameters # hyperparameters loaded from the config file
     num_images = hp.image_nos_to_generate # number of images to generate

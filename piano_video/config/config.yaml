@@ -13,7 +13,8 @@ hyperparameters:
   amp: False                    # turn on mixed precision (if True training breaks on Apple Silicon Macs)
   calculate_fid: False          # whether to calculate fid during training
   num_fid_samples: 50           # how much samples to use for fid calculation
-  save_and_sample_every: 100    # when to save model and generated samples
+  save_and_sample_every: 250    # when to save model and generated samples
   seed: 44                      # for setting manual seed
+  image_nos_to_generate: 1      # number of images to generate in predict
 logging:
   log_on : True                 # set to false to diasble wandb and tensorboard logging

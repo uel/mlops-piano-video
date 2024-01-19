@@ -9,3 +9,31 @@ outs:
       remote_storage:
         etag: 08b8b4fb86a3e983031001
         version_id: '1705661182171704'
+  - relpath: diffusion_model.pt
+    md5: 2f46f11e7bf2273cdd404ddb8a8eafc6
+    size: 143107778
+    cloud:
+      remote_storage:
+        etag: 08dcace6c5a2e983031001
+        version_id: '1705661045511772'
+  - relpath: test_model.pt
+    md5: d5995da746456fefac07b9c12303246e
+    size: 143106278
+    cloud:
+      remote_storage:
+        etag: 08fbe3ace9a3e983031001
+        version_id: '1705661388501499'
+  - relpath: tiny/diffusion_model.pt
+    md5: 2d427f5d66ad1e41a17dc34b58ebe5ae
+    size: 143107178
+    cloud:
+      remote_storage:
+        etag: 0883cfc8fea3e983031001
+        version_id: '1705661432997763'
+  - relpath: tiny/trained_model.pt
+    md5: 2d427f5d66ad1e41a17dc34b58ebe5ae
+    size: 143107178
+    cloud:
+      remote_storage:
+        etag: 08dc9fb6fca3e983031001
+        version_id: '1705661428502492'
