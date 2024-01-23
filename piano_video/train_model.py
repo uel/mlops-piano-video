@@ -70,13 +70,13 @@ def main(cfg):
     for i in range(1000):
         loss = trainer.train_step(unet_number = 1, max_batch_size = 4)
         print(f'loss/train: {loss}')
-        writer.add_scalar('loss/train', loss, trainer.step) 
+        writer.add_scalar('loss/train', loss, i) 
         run.log({"loss/train": loss})
 
         if i and not (i % 50):
             valid_loss = trainer.valid_step(unet_number = 1, max_batch_size = 4)
             print(f'valid loss: {valid_loss}')
-            writer.add_scalar('loss/valid', valid_loss, trainer.step)
+            writer.add_scalar('loss/valid', valid_loss, i)
             run.log({"loss/valid": valid_loss})
 
         if i and not (i % 100) and trainer.is_main: # is_main makes sure this can run in distributed
