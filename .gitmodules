@@ -1,0 +1,3 @@
+[submodule "imagen_pytorch"]
+	path = imagen_pytorch
+	url = https://github.com/uel/imagen-piano.git
