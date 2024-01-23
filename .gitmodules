@@ -1,3 +1,0 @@
-[submodule "piano_video/imagen_pytorch"]
-	path = piano_video/piano_imagen
-	url = https://github.com/uel/imagen-piano.git

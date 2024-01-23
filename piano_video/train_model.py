@@ -1,12 +1,11 @@
 import torch
-from torchvision import utils
-from denoising_diffusion_pytorch import Unet, GaussianDiffusion, Trainer
-from denoising_diffusion_pytorch.denoising_diffusion_pytorch import num_to_groups, divisible_by
 import hydra
+
+from imagen_pytorch import Unet, Imagen, ImagenTrainer
+
+from data.data import Dataset
 import os
 from pathlib import Path
-import math
-from tqdm.auto import tqdm
 from torch.utils.tensorboard import SummaryWriter
 import wandb
 import datetime
@@ -17,7 +16,7 @@ PROJECT_DIR = Path(__file__).parent.parent.resolve()
 def main(cfg):
     
     dataset_name = "images_128"
-    model_dir = "128"
+    model_dir = "128_landmarks"
 
     # setting up paths
     dataset_folder = os.path.join(PROJECT_DIR, 'data', 'processed', dataset_name)
@@ -32,117 +31,63 @@ def main(cfg):
     # fixing seed
     torch.manual_seed(hp.seed)
 
-    if os.path.exists(os.path.join("models", model_dir, "diffusion_model.pt")):
-        diffusion = torch.load(os.path.join("models", model_dir, "diffusion_model.pt"))
+    if os.path.exists(os.path.join("models", model_dir, "model.pt")):
+        imagen = torch.load(os.path.join("models", model_dir, "model.pt"))
         if torch.cuda.is_available():
-            diffusion.cuda()
-        diffusion.eval()
+            imagen.cuda()
         print("Loaded model from file.")
     else:
-        # define U-net backbone of the DDPM
-        model = Unet(
-            dim=cfg.hyperparameters.dim,
-            dim_mults=tuple(cfg.hyperparameters.dim_mults),
-            flash_attn=cfg.hyperparameters.flash_attn
+        # unets for unconditional imagen
+        unet = Unet(
+            dim = 32,
+            dim_mults = (1, 2, 4, 8),
+            num_resnet_blocks = 1,
+            layer_attns = (False, False, False, True),
+            layer_cross_attns = False,
+            text_embed_dim=126,
+            cond_dim=126
         )
 
-        # define the DDPM itself
-        diffusion = GaussianDiffusion(
-            model,
-            image_size=hp.image_size,
-            timesteps=hp.timesteps,
-            sampling_timesteps=hp.sampling_timesteps
+        # imagen, which contains the unet above
+
+        imagen = Imagen(
+            unets = unet,
+            image_sizes = 128,
+            timesteps = 1000,
+            text_embed_dim=126
         )
 
     # setting up the trainer class in denoising_diffusion_pytorch
-    trainer = Trainer(
-            diffusion,
-            dataset_folder,
-            train_batch_size = hp.train_batch_size,
-            train_lr = hp.train_lr,
-            train_num_steps = hp.train_num_steps,
-            gradient_accumulate_every = hp.gradient_accumulate_every,
-            ema_decay = hp.ema_decay,
-            amp = hp.amp,
-            calculate_fid = hp.calculate_fid,
-            results_folder = results_folder,
-            num_fid_samples = hp.num_fid_samples,
-            save_and_sample_every = hp.save_and_sample_every
-        )
+    trainer = ImagenTrainer(
+        imagen = imagen,
+        split_valid_from_train = True # whether to split the validation dataset from the training
+    )
 
-    # explicit model training to be able to log progress
-    if cfg.logging.log_on:
-        accelerator = trainer.accelerator
-        device = accelerator.device
+    dataset = Dataset(dataset_folder, image_size = 128)
 
-        with tqdm(initial = trainer.step, total = trainer.train_num_steps, disable = not accelerator.is_main_process) as pbar:
-            while trainer.step < trainer.train_num_steps:
+    trainer.add_train_dataset(dataset, batch_size = 16)
 
-                total_loss = 0.
-                for _ in range(trainer.gradient_accumulate_every):
-                    data = next(trainer.dl).to(device)
+    for i in range(1000):
+        loss = trainer.train_step(unet_number = 1, max_batch_size = 4)
+        print(f'loss/train: {loss}')
+        writer.add_scalar('loss/train', loss, trainer.step) 
+        run.log({"loss/train": loss})
 
-                    with trainer.accelerator.autocast():
-                        loss = trainer.model(data)
-                        loss = loss / trainer.gradient_accumulate_every
-                        total_loss += loss.item()
+        if i and not (i % 50):
+            valid_loss = trainer.valid_step(unet_number = 1, max_batch_size = 4)
+            print(f'valid loss: {valid_loss}')
+            writer.add_scalar('loss/valid', valid_loss, trainer.step)
+            run.log({"loss/valid": valid_loss})
 
-                    trainer.accelerator.backward(loss)
-
-                writer.add_scalar('Loss/train', total_loss, trainer.step) # logging loss with tensorboard
-                run.log({"loss/train":total_loss}) # logging loss with wandb
-
-                pbar.set_description(f'loss: {total_loss:.4f}')
-
-                accelerator.wait_for_everyone()
-                accelerator.clip_grad_norm_(trainer.model.parameters(), trainer.max_grad_norm)
-
-                trainer.opt.step()
-                trainer.opt.zero_grad()
-
-                accelerator.wait_for_everyone()
-
-                trainer.step += 1
-                if accelerator.is_main_process:
-                    trainer.ema.update()
-
-                    if trainer.step != 0 and divisible_by(trainer.step, trainer.save_and_sample_every):
-                        trainer.ema.ema_model.eval()
-
-                        with torch.inference_mode():
-                            milestone = trainer.step // trainer.save_and_sample_every
-                            batches = num_to_groups(trainer.num_samples, trainer.batch_size)
-                            all_images_list = list(map(lambda n: trainer.ema.ema_model.sample(batch_size=n), batches))
-
-                        all_images = torch.cat(all_images_list, dim = 0)
-
-                        utils.save_image(all_images, str(trainer.results_folder / f'sample-{milestone}.png'), nrow = int(math.sqrt(trainer.num_samples)))
-
-                        # whether to calculate fid
-
-                        if trainer.calculate_fid:
-                            fid_score = trainer.fid_scorer.fid_score()
-                            accelerator.print(f'fid_score: {fid_score}')
-                        if trainer.save_best_and_latest_only:
-                            if trainer.best_fid > fid_score:
-                                trainer.best_fid = fid_score
-                                trainer.save("best")
-                            trainer.save("latest")
-                        else:
-                            trainer.save(milestone)
-
-                pbar.update(1)
-
-            run.finish()
-        accelerator.print('training complete')
-
-    # training using the Trainer class for no logging
-    else:
-        trainer.train()
+        if i and not (i % 100) and trainer.is_main: # is_main makes sure this can run in distributed
+            _, valid_landmarks = next(trainer.valid_dl_iter)
+            images = trainer.sample(text_embeds=valid_landmarks, batch_size = 1, return_pil_images = True)
+            wandb.log({"samples": [wandb.Image(image) for image in images]})
+            # images[0].save(f'./sample-{i // 100}.png')
 
     # saving model
     os.makedirs(os.path.join(PROJECT_DIR, 'models', model_dir), exist_ok=True)
-    torch.save(diffusion, os.path.join(PROJECT_DIR, 'models', model_dir, 'diffusion_model.pt'))
+    torch.save(imagen, os.path.join(PROJECT_DIR, 'models', model_dir, 'model.pt'))
 
 if __name__ == "__main__":
     main()
