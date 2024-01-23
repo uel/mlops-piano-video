@@ -81,12 +81,12 @@ def main(cfg):
             writer.add_scalar('loss/valid', valid_loss, i)
             run.log({"loss/valid": valid_loss})
 
-        if i and not (i % 500) and trainer.is_main: # is_main makes sure this can run in distributed
-            if validation_landmarks is None:
-                _, valid_landmarks = next(trainer.valid_dl_iter)
+        # if i and not (i % 500) and trainer.is_main: # is_main makes sure this can run in distributed
+        #     if validation_landmarks is None:
+        #         _, valid_landmarks = next(trainer.valid_dl_iter)
 
-            images = trainer.sample(text_embeds=valid_landmarks, batch_size = 1, return_pil_images = True)
-            wandb.log({"samples": [wandb.Image(image) for image in images]})
+        #     images = trainer.sample(text_embeds=valid_landmarks, batch_size = 1, return_pil_images = True)
+        #     wandb.log({"samples": [wandb.Image(image) for image in images]})
             # images[0].save(f'./sample-{i // 100}.png')
 
     # saving model
