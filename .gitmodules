@@ -1,3 +1,3 @@
-[submodule "imagen_pytorch"]
-	path = imagen_pytorch
+[submodule "piano_video/imagen_pytorch"]
+	path = piano_video/imagen_pytorch
 	url = https://github.com/uel/imagen-piano.git
