@@ -69,25 +69,23 @@ def main(cfg):
 
     validation_landmarks = None
 
-    for i in range(5000):
-        loss = trainer.train_step(unet_number = 1, max_batch_size = 4)
-        print(f'loss/train: {loss}')
-        writer.add_scalar('loss/train', loss, i) 
-        run.log({"loss/train": loss})
+    # for i in range(5000):
+    #     loss = trainer.train_step(unet_number = 1, max_batch_size = 4)
+    #     print(f'loss/train: {loss}')
+    #     writer.add_scalar('loss/train', loss, i) 
+    #     run.log({"loss/train": loss})
 
-        if i and not (i % 100):
-            valid_loss = trainer.valid_step(unet_number = 1, max_batch_size = 4)
-            print(f'valid loss: {valid_loss}')
-            writer.add_scalar('loss/valid', valid_loss, i)
-            run.log({"loss/valid": valid_loss})
+    #     if i and not (i % 100):
+    #         valid_loss = trainer.valid_step(unet_number = 1, max_batch_size = 4)
+    #         print(f'valid loss: {valid_loss}')
+    #         writer.add_scalar('loss/valid', valid_loss, i)
+    #         run.log({"loss/valid": valid_loss})
 
-        # if not (i % 500) and trainer.is_main: # is_main makes sure this can run in distributed
-        #     if validation_landmarks is None:
-        #         _, valid_landmarks = next(trainer.valid_dl_iter)
-
-        #     images = trainer.sample(text_embeds=valid_landmarks, batch_size = 1, return_pil_images = True)
-        #     wandb.log({"samples": [wandb.Image(image) for image in images]})
-        #     images[0].save(f'./sample-{i // 100}.png')
+    for i in range(10):
+        _, valid_landmarks = next(trainer.valid_dl_iter)
+        images = trainer.sample(text_embeds=valid_landmarks, batch_size = 1, return_pil_images = True)
+        wandb.log({"samples": [wandb.Image(image) for image in images]})
+        # images[0].save(f'./sample-{i // 100}.png')
 
     # saving model
     os.makedirs(os.path.join(PROJECT_DIR, 'models', model_dir), exist_ok=True)
