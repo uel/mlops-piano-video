@@ -32,7 +32,7 @@ def main(cfg):
     torch.manual_seed(hp.seed)
 
     if os.path.exists(os.path.join("models", model_dir, "model.pt")):
-        imagen = torch.load(os.path.join("models", model_dir, "model.pt"))
+        trainer = ImagenTrainer(imagen_checkpoint_path=os.path.join("models", model_dir, "model.pt"))
         print("Loaded model from file.")
     else:
         # unets for unconditional imagen
@@ -54,14 +54,14 @@ def main(cfg):
             text_embed_dim=126
         )
 
-    if torch.cuda.is_available():
-        imagen.cuda()
+        if torch.cuda.is_available():
+            imagen.cuda()
 
-    # setting up the trainer class in denoising_diffusion_pytorch
-    trainer = ImagenTrainer(
-        imagen = imagen,
-        split_valid_from_train = True # whether to split the validation dataset from the training
-    )
+        # setting up the trainer class in denoising_diffusion_pytorch
+        trainer = ImagenTrainer(
+            imagen = imagen,
+            split_valid_from_train = True
+        )
 
     dataset = Dataset(dataset_folder, image_size = 128)
 
@@ -69,7 +69,7 @@ def main(cfg):
 
     validation_landmarks = None
 
-    for i in range(10000):
+    for i in range(5000):
         loss = trainer.train_step(unet_number = 1, max_batch_size = 4)
         print(f'loss/train: {loss}')
         writer.add_scalar('loss/train', loss, i) 
@@ -81,17 +81,17 @@ def main(cfg):
             writer.add_scalar('loss/valid', valid_loss, i)
             run.log({"loss/valid": valid_loss})
 
-        # if i and not (i % 500) and trainer.is_main: # is_main makes sure this can run in distributed
+        # if not (i % 500) and trainer.is_main: # is_main makes sure this can run in distributed
         #     if validation_landmarks is None:
         #         _, valid_landmarks = next(trainer.valid_dl_iter)
 
         #     images = trainer.sample(text_embeds=valid_landmarks, batch_size = 1, return_pil_images = True)
         #     wandb.log({"samples": [wandb.Image(image) for image in images]})
-            # images[0].save(f'./sample-{i // 100}.png')
+        #     images[0].save(f'./sample-{i // 100}.png')
 
     # saving model
     os.makedirs(os.path.join(PROJECT_DIR, 'models', model_dir), exist_ok=True)
-    torch.save(imagen, os.path.join(PROJECT_DIR, 'models', model_dir, 'model.pt'))
+    trainer.save(os.path.join(PROJECT_DIR, 'models', model_dir, 'model.pt'))
 
 if __name__ == "__main__":
     main()
