@@ -84,7 +84,7 @@ def main(cfg):
     trainer.create_valid_iter()
     for i in range(10):
         _, valid_landmarks = next(trainer.valid_dl_iter)
-        images = trainer.sample(text_embeds=valid_landmarks, batch_size = 1, return_pil_images = True)
+        images = trainer.sample(text_embeds=valid_landmarks[:4], batch_size = 1, return_pil_images = True)
         wandb.log({"samples": [wandb.Image(image) for image in images]})
         # images[0].save(f'./sample-{i // 100}.png')
 
