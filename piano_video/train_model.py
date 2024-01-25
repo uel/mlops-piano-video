@@ -88,8 +88,8 @@ def main(cfg):
         # images[0].save(f'./sample-{i // 100}.png')
 
     # saving model
-    os.makedirs(os.path.join(PROJECT_DIR, 'models', model_dir), exist_ok=True)
-    trainer.save(os.path.join(PROJECT_DIR, 'models', model_dir, 'model.pt'))
+    # os.makedirs(os.path.join(PROJECT_DIR, 'models', model_dir), exist_ok=True)
+    # trainer.save(os.path.join(PROJECT_DIR, 'models', model_dir, 'model.pt'))
 
 if __name__ == "__main__":
     main()
