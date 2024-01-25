@@ -31,32 +31,32 @@ def main(cfg):
     # fixing seed
     torch.manual_seed(hp.seed)
 
+    unet = Unet(
+        dim = 64,
+        dim_mults = (1, 2, 4, 8),
+        num_resnet_blocks = 1,
+        layer_attns = (False, True, True, True),
+        layer_cross_attns = (False, True, True, True),
+        text_embed_dim=126,
+        cond_dim=126
+    )
+
+    # imagen, which contains the unet above
+    imagen = Imagen(
+        unets = unet,
+        image_sizes = 128,
+        timesteps = 1000,
+        text_embed_dim=126
+    )
+
+    if torch.cuda.is_available():
+        imagen.cuda()
+
     if os.path.exists(os.path.join("models", model_dir, "model.pt")):
-        trainer = ImagenTrainer(imagen_checkpoint_path=os.path.join("models", model_dir, "model.pt"), split_valid_from_train=True)
+        trainer = ImagenTrainer(imagen, split_valid_from_train=True)
+        trainer.load(os.path.join("models", model_dir, "model.pt"))
         print("Loaded model from file.")
     else:
-        # unets for unconditional imagen
-        unet = Unet(
-            dim = 64,
-            dim_mults = (1, 2, 4, 8),
-            num_resnet_blocks = 1,
-            layer_attns = (False, True, True, True),
-            layer_cross_attns = (False, True, True, True),
-            text_embed_dim=126,
-            cond_dim=126
-        )
-
-        # imagen, which contains the unet above
-        imagen = Imagen(
-            unets = unet,
-            image_sizes = 128,
-            timesteps = 1000,
-            text_embed_dim=126
-        )
-
-        if torch.cuda.is_available():
-            imagen.cuda()
-
         # setting up the trainer class in denoising_diffusion_pytorch
         trainer = ImagenTrainer(
             imagen = imagen,
@@ -81,6 +81,7 @@ def main(cfg):
     #         writer.add_scalar('loss/valid', valid_loss, i)
     #         run.log({"loss/valid": valid_loss})
 
+    trainer.create_valid_iter()
     for i in range(10):
         _, valid_landmarks = next(trainer.valid_dl_iter)
         images = trainer.sample(text_embeds=valid_landmarks, batch_size = 1, return_pil_images = True)
