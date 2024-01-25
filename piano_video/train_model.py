@@ -32,7 +32,7 @@ def main(cfg):
     torch.manual_seed(hp.seed)
 
     if os.path.exists(os.path.join("models", model_dir, "model.pt")):
-        trainer = ImagenTrainer(imagen_checkpoint_path=os.path.join("models", model_dir, "model.pt"))
+        trainer = ImagenTrainer(imagen_checkpoint_path=os.path.join("models", model_dir, "model.pt"), split_valid_from_train=True)
         print("Loaded model from file.")
     else:
         # unets for unconditional imagen
