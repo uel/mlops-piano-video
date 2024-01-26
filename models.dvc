@@ -16,6 +16,13 @@ outs:
       remote_storage:
         etag: 08a381a38bdcf783031001
         version_id: '1706157528367267'
+  - relpath: 512_landmarks/model.pt
+    md5: 713578b6c9a9e7514da412f95cbdfe39
+    size: 939892340
+    cloud:
+      remote_storage:
+        etag: 08db86bdfd86fc83031001
+        version_id: '1706306481111899'
   - relpath: diffusion_model.pt
     md5: 2f46f11e7bf2273cdd404ddb8a8eafc6
     size: 143107778
