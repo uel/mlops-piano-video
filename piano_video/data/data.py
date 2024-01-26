@@ -38,7 +38,6 @@ class Dataset(Dataset):
         self.transform = T.Compose([
             T.Lambda(convert_fn),
             T.Resize(image_size),
-            T.RandomHorizontalFlip(),
             T.CenterCrop(image_size),
             T.ToTensor()
         ])
@@ -49,4 +48,8 @@ class Dataset(Dataset):
     def __getitem__(self, index):
         path = self.paths[index]
         img = Image.open(path)
-        return self.transform(img), self.landmarks[index]
+
+        prev_landmark = self.landmarks[index - 1] if index > 0 else torch.zeros_like(self.landmarks[0])
+        next_landmark = self.landmarks[index + 1] if index < len(self.landmarks) - 1 else torch.zeros_like(self.landmarks[0])
+        landmarks = torch.cat([prev_landmark, self.landmarks[index], next_landmark])
+        return self.transform(img), landmarks
