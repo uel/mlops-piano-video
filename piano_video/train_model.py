@@ -110,7 +110,7 @@ def main(cfg):
                 writer.add_scalar('loss/valid', valid_loss, i)
                 run.log({"loss/valid": valid_loss})
             
-            if not (i % 249) and trainer.is_main:
+            if not (i % 511) and trainer.is_main:
                 _, valid_landmarks = next(trainer.valid_dl_iter)
                 images = trainer.sample(batch_size = 1, return_pil_images = True, text_embeds=valid_landmarks[:4])
                 # images[0].save(f'./sample-{i // 100}.png')
