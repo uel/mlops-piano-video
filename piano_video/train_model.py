@@ -98,7 +98,7 @@ def main(cfg):
     trainer.create_valid_iter()
 
     for unet in [1, 2]:
-        for i in range(500):
+        for i in range(5000):
             loss = trainer.train_step(unet_number = unet, max_batch_size = 4)
             print(f'loss/train: {loss}')
             writer.add_scalar('loss/train', loss, i) 
