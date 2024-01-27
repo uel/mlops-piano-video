@@ -97,7 +97,7 @@ def main(cfg):
     trainer.add_train_dataset(dataset, batch_size = 16)
     trainer.create_valid_iter()
 
-    for unet in [1, 2]:
+    for unet in [2]:
         for i in range(5000):
             loss = trainer.train_step(unet_number = unet, max_batch_size = 4)
             print(f'loss/train: {loss}')
